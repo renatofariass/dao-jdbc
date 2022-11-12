@@ -52,16 +52,8 @@ public class VendedorDaoJDBC implements VendedorDao {
             //verificando se o vendedor existe no banco de dados
             //se verdadeiro, retorna os dados do vendedor. Se falso, retorna nulo
            if(rs.next()) {
-               Departamento dep = new Departamento();
-               dep.setId(rs.getInt("DepartmentId"));
-               dep.setNome(rs.getString("DepName"));
-               Vendedor vendedor = new Vendedor();
-               vendedor.setId(rs.getInt("Id"));
-               vendedor.setNome(rs.getString("Name"));
-               vendedor.setEmail(rs.getString("Email"));
-               vendedor.setSalarioBase(rs.getDouble("BaseSalary"));
-               vendedor.setAniversario(rs.getDate("BirthDate"));
-               vendedor.setDepartamento(dep);
+               Departamento dep = instanciarDepartamento(rs);
+               Vendedor vendedor = instanciarVendedor(rs, dep);
                return vendedor;
            }
            //retornando nulo caso o if seja falso
@@ -75,6 +67,25 @@ public class VendedorDaoJDBC implements VendedorDao {
             DB.closeStatement(st);
             DB.closeResultSet(rs);
         }
+    }
+    //criando função para reutilizar a instanciação de departamento
+    private Departamento instanciarDepartamento(ResultSet rs) throws SQLException {
+        Departamento dep = new Departamento();
+        dep.setId(rs.getInt("DepartmentId"));
+        dep.setNome(rs.getString("DepName"));
+        return dep;
+    }
+
+    //criando função para reutilizar a instanciação de departamento
+    private Vendedor instanciarVendedor(ResultSet rs, Departamento dep) throws SQLException {
+        Vendedor vendedor = new Vendedor();
+        vendedor.setId(rs.getInt("Id"));
+        vendedor.setNome(rs.getString("Name"));
+        vendedor.setEmail(rs.getString("Email"));
+        vendedor.setSalarioBase(rs.getDouble("BaseSalary"));
+        vendedor.setAniversario(rs.getDate("BirthDate"));
+        vendedor.setDepartamento(dep);
+        return vendedor;
     }
 
     @Override
