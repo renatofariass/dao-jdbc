@@ -86,7 +86,11 @@ public class VendedorDaoJDBC implements VendedorDao {
         try {
             st = conn.prepareStatement("DELETE FROM seller WHERE Id = ?");
             st.setInt(1, id);
-            st.executeUpdate();
+            int linhasAfetadas = st.executeUpdate();
+
+            if(linhasAfetadas == 0) {
+                throw new DbException("Esse Id não existe!");
+            }
         }
         catch (SQLException e) {
             throw new DbException(e.getMessage());
