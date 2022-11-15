@@ -28,6 +28,11 @@ public class Programa {
         for (Vendedor obj : list) {
             System.out.println(obj);
         }
+
+        System.out.println("\n insert Vendedor: ");
+        Vendedor vend = new Vendedor(null, "Greg", "greg@gmail.com", new Date(), 4000.0, departamento);
+        vendedorDao.insert(vend);
+        System.out.println("Inserido! Novo id: " + vend.getId());
     }
 
 
