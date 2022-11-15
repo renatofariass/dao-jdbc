@@ -34,14 +34,14 @@ public class Programa {
         }
 
 
-        System.out.println("\n Insert Vendedor: ");
+        System.out.println("\nInsert Vendedor: ");
         Vendedor vend = new Vendedor(null, "Greg", "greg@gmail.com", new Date(), 4000.0, departamento);
         vendedorDao.insert(vend);
         System.out.println("Inserido! Novo id: " + vend.getId());
 
 
 
-        System.out.println("\n Update Vendedor: ");
+        System.out.println("\nUpdate Vendedor: ");
         vendedor = vendedorDao.findById(1);
         vendedor.setNome("Renato Farias");
         vendedorDao.update(vendedor);
