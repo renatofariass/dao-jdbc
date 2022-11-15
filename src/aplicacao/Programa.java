@@ -15,6 +15,8 @@ public class Programa {
         Scanner sc = new Scanner(System.in);
 
         VendedorDao vendedorDao = DaoFactory.criarVendedorDao();
+
+        System.out.println("FindByID: ");
         Vendedor vendedor = vendedorDao.findById(3);
         System.out.println(vendedor);
 
@@ -31,20 +33,20 @@ public class Programa {
             System.out.println(obj);
         }
 
-        /*
+
         System.out.println("\n Insert Vendedor: ");
         Vendedor vend = new Vendedor(null, "Greg", "greg@gmail.com", new Date(), 4000.0, departamento);
         vendedorDao.insert(vend);
         System.out.println("Inserido! Novo id: " + vend.getId());
-         */
 
-        /*
+
+
         System.out.println("\n Update Vendedor: ");
         vendedor = vendedorDao.findById(1);
         vendedor.setNome("Renato Farias");
         vendedorDao.update(vendedor);
         System.out.println("Update completado");
-         */
+
 
         System.out.println("\nDelete Vendedor: ");
         System.out.println("Digite o ID do vendedor que você deseja deletar: ");
