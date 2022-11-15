@@ -10,7 +10,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class VendedorDaoJDBC implements VendedorDao {
     //implementação da interface VendedorDao
@@ -68,6 +71,101 @@ public class VendedorDaoJDBC implements VendedorDao {
             DB.closeResultSet(rs);
         }
     }
+
+    @Override
+    public List<Vendedor> findByDepartamento(Departamento departamento) {
+        PreparedStatement st = null;
+        ResultSet rs = null;
+        try {
+            //consulta no banco de dados por id do vendedor
+            st = conn.prepareStatement("SELECT seller.*,department.Name as DepName "
+                    + "FROM seller INNER JOIN department "
+                    + "ON seller.DepartmentId = department.Id "
+                    + "WHERE DepartmentId = ? "
+                    + "ORDER BY Name");
+            //substituindo a "?" do where por um id
+            st.setInt(1, departamento.getId());
+            //guardando o resultado dentro do result set
+            rs = st.executeQuery();
+            //criando uma lista para armazenar os vendedores
+            List<Vendedor> list = new ArrayList<>();
+            //criando um map para controle de não repetição departamento
+            Map<Integer, Departamento> map = new HashMap<>();
+
+            while(rs.next()) {
+                //verificando se o departamento já existe no map, caso exista iremos reaproveitá-lo
+                Departamento dep = map.get(rs.getInt("DepartmentId"));
+                //caso o departamento não esteja contido no map, irá retornar nulo e teremos que instanciar ele
+                if(dep == null) {
+                    //instanciando o departamento
+                    dep = instanciarDepartamento(rs);
+                    //salvando o departamento no map
+                    map.put(rs.getInt("DepartmentId"), dep);
+                }
+                //instanciando vendedor
+                Vendedor vendedor = instanciarVendedor(rs, dep);
+                //adicionando vendedor a lista
+                list.add(vendedor);
+            }
+            //retornando nulo caso o if seja falso
+            return list;
+        }
+        catch (SQLException e) {
+            throw new DbException(e.getMessage());
+        }
+        finally {
+            //fechando o statement e o result set
+            DB.closeStatement(st);
+            DB.closeResultSet(rs);
+        }
+    }
+
+    @Override
+    public List<Vendedor> findAll() {
+        PreparedStatement st = null;
+        ResultSet rs = null;
+        try {
+            //consulta no banco de dados por id do vendedor
+            st = conn.prepareStatement("SELECT seller.*,department.Name as DepName "
+                    + "FROM seller INNER JOIN department "
+                    + "ON seller.DepartmentId = department.Id "
+                    + "ORDER BY Name");
+
+            //guardando o resultado dentro do result set
+            rs = st.executeQuery();
+            //criando uma lista para armazenar os vendedores
+            List<Vendedor> list = new ArrayList<>();
+            //criando um map para controle de não repetição departamento
+            Map<Integer, Departamento> map = new HashMap<>();
+
+            while(rs.next()) {
+                //verificando se o departamento já existe no map, caso exista iremos reaproveitá-lo
+                Departamento dep = map.get(rs.getInt("DepartmentId"));
+                //caso o departamento não esteja contido no map, irá retornar nulo e teremos que instanciar ele
+                if(dep == null) {
+                    //instanciando o departamento
+                    dep = instanciarDepartamento(rs);
+                    //salvando o departamento no map
+                    map.put(rs.getInt("DepartmentId"), dep);
+                }
+                //instanciando vendedor
+                Vendedor vendedor = instanciarVendedor(rs, dep);
+                //adicionando vendedor a lista
+                list.add(vendedor);
+            }
+            //retornando nulo caso o if seja falso
+            return list;
+        }
+        catch (SQLException e) {
+            throw new DbException(e.getMessage());
+        }
+        finally {
+            //fechando o statement e o result set
+            DB.closeStatement(st);
+            DB.closeResultSet(rs);
+        }
+    }
+
     //criando função para reutilizar a instanciação de departamento
     private Departamento instanciarDepartamento(ResultSet rs) throws SQLException {
         Departamento dep = new Departamento();
@@ -86,10 +184,5 @@ public class VendedorDaoJDBC implements VendedorDao {
         vendedor.setAniversario(rs.getDate("BirthDate"));
         vendedor.setDepartamento(dep);
         return vendedor;
-    }
-
-    @Override
-    public List<Vendedor> findAll() {
-        return null;
     }
 }
